@@ -67,6 +67,8 @@ public class U2_P8_6_Statement {
 
                 s.close();
                 con.close();
+                
+                System.out.println("El registro ha sido insertado correctamente");
 
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(U2_P8_6_Statement.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,8 +76,6 @@ public class U2_P8_6_Statement {
                 System.out.println("Mensaje: " + ex.getMessage());
                 System.out.println("Estado SQL: " + ex.getSQLState());
                 System.out.println("Código de error: " + ex.getErrorCode());
-            }finally{
-                System.out.println("El registro ha sido insertado correctamente");
             }
         }
     }
