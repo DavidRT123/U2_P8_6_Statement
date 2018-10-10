@@ -47,39 +47,32 @@ public class U2_P8_6_Statement {
         }
 
         if (sw) {
-            guardar(nombre, apellidos, email, dept_no, salario, fecha_alta);
-            System.out.println("El registro ha sido insertado correctamente");
+            try {
+                Class.forName("org.sqlite.JDBC");
+
+                Connection con = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\mdfda\\Desktop\\DAM\\Acceso a Datos (AD)\\Tema 2\\Ejercicios\\clase\\bases\\sqlite\\ejemplo.db");
+
+                Statement s = con.createStatement();
+
+                String cadena = "'" + nombre + "', '" + apellidos + "', '" + email + "',";
+
+                //Para que la restricción de la clave foranea salte es necesario activarla antes de ejecutar la sentencia (PRAGMA foreign_keys = ON;)
+                s.executeUpdate("PRAGMA foreign_keys = ON; INSERT INTO profesores VALUES((SELECT MAX(NRM) FROM profesores) + 1, " + cadena + "'" + fecha_alta +"', " + dept_no + ", " + salario + ")");
+
+                s.close();
+                con.close();
+
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(U2_P8_6_Statement.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                System.out.println("Mensaje: " + ex.getMessage());
+                System.out.println("Estado SQL: " + ex.getSQLState());
+                System.out.println("Código de error: " + ex.getErrorCode());
+            }finally{
+                System.out.println("El registro ha sido insertado correctamente");
+            }
         } else {
             System.out.println("El registro no se ha podido introducir");
         }
     }
-
-    public static String guardar(String nombre, String apellidos, String email, String dept_no, Float salario, Date fecha_alta) {
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-
-            Connection con = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\mdfda\\Desktop\\DAM\\Acceso a Datos (AD)\\Tema 2\\Ejercicios\\clase\\bases\\sqlite\\ejemplo.db");
-
-            Statement s = con.createStatement();
-
-            String cadena = "'" + nombre + "', '" + apellidos + "', '" + email + "',";
-
-            //Para que la restricción de la clave foranea salte es necesario activarla antes de ejecutar la sentencia (PRAGMA foreign_keys = ON;)
-            s.executeUpdate("PRAGMA foreign_keys = ON; INSERT INTO profesores VALUES((SELECT MAX(NRM) FROM profesores) + 1, " + cadena + "'" + fecha_alta +"', " + dept_no + ", " + salario + ")");
-
-            s.close();
-            con.close();
-
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(U2_P8_6_Statement.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            System.out.println("Mensaje: " + ex.getMessage());
-            System.out.println("Estado SQL: " + ex.getSQLState());
-            System.out.println("Código de error: " + ex.getErrorCode());
-        }
-
-        return "cadena";
-    }
-
 }
