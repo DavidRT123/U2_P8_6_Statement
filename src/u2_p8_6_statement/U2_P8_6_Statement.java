@@ -19,10 +19,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.*;
 
 /**
  *
@@ -37,16 +37,22 @@ public class U2_P8_6_Statement {
 
         String nombre = args[0], apellidos = args[1] + " " + args[2], email = args[3], dept_no = args[4];
         Float salario = Float.parseFloat(args[5]);
-        java.util.Date fecha_antes = new java.util.Date();
+        Date fecha_antes = new Date();
         java.sql.Date fecha_alta = new java.sql.Date(fecha_antes.getTime());
-        Boolean sw = true;
-
-        if (salario <= 0.0) {
-            System.out.println("El salario debe ser mayor que 0.0");
-            sw = false;
-        }
-
-        if (sw) {
+        
+        //Expresión regular para verificar que la dirección de email est abien formada
+        Pattern patron = Pattern.compile("^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@" + "[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$"); 
+        Boolean emailValido = patron.matcher(email).matches(), apellidoValido;
+            
+        if (salario <= 0.0 || !emailValido) {
+            if(salario <= 0.0){
+                System.out.println("El salario debe ser mayor que 0: " + salario);
+            }
+            if(!emailValido){
+                System.out.println("El email no tiene el formato adecuado: " + email);
+            }
+            System.out.println("El registro no se ha podido introducir");
+        }else{
             try {
                 Class.forName("org.sqlite.JDBC");
 
@@ -71,8 +77,6 @@ public class U2_P8_6_Statement {
             }finally{
                 System.out.println("El registro ha sido insertado correctamente");
             }
-        } else {
-            System.out.println("El registro no se ha podido introducir");
         }
     }
 }
